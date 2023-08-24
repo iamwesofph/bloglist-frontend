@@ -6,7 +6,8 @@ import loginService from "./services/login";
 
 const App = () => {
     const [blogs, setBlogs] = useState([]);
-    const [errorMessage, setErrorMessage] = useState(null);
+    const [notificationMessage, setNotificationMessage] = useState(null);
+    const [notificationType, setNotificationType] = useState("");
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [user, setUser] = useState(null);
@@ -57,9 +58,11 @@ const App = () => {
             setUsername("");
             setPassword("");
         } catch (exception) {
-            setErrorMessage("Wrong credentials");
+            setNotificationMessage("Wrong credentials");
+            setNotificationType("error");
             setTimeout(() => {
-                setErrorMessage(null);
+                setNotificationMessage(null);
+                setNotificationType("");
             }, 5000);
         }
     };
@@ -107,6 +110,12 @@ const App = () => {
         try {
             const returnedBlog = await blogService.create(blogObject);
             setBlogs(blogs.concat(returnedBlog));
+            setNotificationMessage(`A new blog ${title} by ${author} successfully added!`);
+            setNotificationType("success");
+            setTimeout(() => {
+                setNotificationMessage(null);
+                setNotificationType("");
+            }, 5000);
             setTitle("");
             setAuthor("");
             setUrl("");
@@ -139,7 +148,7 @@ const App = () => {
     return (
         <div>
             <h2>Blogs</h2>
-            <Notification message={errorMessage} />
+            <Notification message={notificationMessage} type={notificationType} />
 
             {!user && login()}
             {user && (
