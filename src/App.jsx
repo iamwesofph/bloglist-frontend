@@ -10,9 +10,26 @@ const App = () => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [user, setUser] = useState(null);
+    const [title, setTitle] = useState("");
+    const [author, setAuthor] = useState("");
+    const [url, setUrl] = useState("");
+
+    // useEffect(() => {
+    //     blogService.getAll().then((blogs) => setBlogs(blogs));
+    // }, []);
 
     useEffect(() => {
-        blogService.getAll().then((blogs) => setBlogs(blogs));
+        const fetchBlogs = async () => {
+            try {
+                const blogs = await blogService.getAll();
+                setBlogs(blogs);
+            } catch (error) {
+                // Handle error if needed
+                console.error("Error fetching blogs:", error);
+            }
+        };
+
+        fetchBlogs();
     }, []);
 
     useEffect(() => {
@@ -20,7 +37,7 @@ const App = () => {
         if (loggedUserJSON) {
             const user = JSON.parse(loggedUserJSON);
             setUser(user);
-            // noteService.setToken(user.token);
+            blogService.setToken(user.token);
         }
     }, []);
 
@@ -35,7 +52,7 @@ const App = () => {
 
             window.localStorage.setItem("loggedNoteappUser", JSON.stringify(user));
 
-            // noteService.setToken(user.token);
+            blogService.setToken(user.token);
             setUser(user);
             setUsername("");
             setPassword("");
@@ -79,6 +96,46 @@ const App = () => {
         window.localStorage.removeItem("loggedNoteappUser");
     };
 
+    const handleAddBlog = async (event) => {
+        event.preventDefault();
+        const blogObject = {
+            title: title,
+            author: author,
+            url: url,
+        };
+
+        try {
+            const returnedBlog = await blogService.create(blogObject);
+            setBlogs(blogs.concat(returnedBlog));
+            setTitle("");
+            setAuthor("");
+            setUrl("");
+        } catch (error) {
+            // Handle error if needed
+            console.error("Error adding note:", error);
+        }
+    };
+
+    const addBlogForm = () => {
+        return (
+            <form onSubmit={handleAddBlog}>
+                <div>
+                    <span>Title</span>
+                    <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} />
+                </div>
+                <div>
+                    <span>Author</span>
+                    <input type="text" value={author} onChange={(e) => setAuthor(e.target.value)} />
+                </div>
+                <div>
+                    <span>URL</span>
+                    <input type="text" value={url} onChange={(e) => setUrl(e.target.value)} />
+                </div>
+                <button type="submit">Add Blog</button>
+            </form>
+        );
+    };
+
     return (
         <div>
             <h2>Blogs</h2>
@@ -90,6 +147,7 @@ const App = () => {
                     <p>
                         {user.name} logged in <button onClick={handleLogout}>Logout</button>
                     </p>
+                    {addBlogForm()}
                     {bloglist()}
                 </div>
             )}
