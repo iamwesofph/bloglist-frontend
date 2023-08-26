@@ -1,7 +1,7 @@
 import { useState } from "react";
 import blogService from "../services/blogs";
 
-const Blog = ({ blog, getBlogs }) => {
+const Blog = ({ blog, getBlogs, user }) => {
     const [isCollapsed, setIsCollapsed] = useState(true);
     const blogStyle = {
         paddingTop: 10,
@@ -11,11 +11,27 @@ const Blog = ({ blog, getBlogs }) => {
         marginBottom: 5,
     };
 
+    const buttonStyle = {
+        padding: ".5rem 1rem",
+        backgroundColor: "dodgerblue",
+        borderRadius: "0.375rem",
+        border: "none",
+    };
+
     const addLike = async () => {
         const blogObject = {
             likes: blog.likes + 1,
         };
         await blogService.update(blog.id, blogObject);
+
+        getBlogs();
+    };
+
+    const deleteBlog = async () => {
+        if (window.confirm("Are you sure?")) {
+            console.log(blog.id);
+            await blogService.remove(blog.id);
+        }
 
         getBlogs();
     };
@@ -32,8 +48,20 @@ const Blog = ({ blog, getBlogs }) => {
                         {blog.title} by {blog.author} <button onClick={() => setIsCollapsed(true)}>Hide</button>
                     </div>
                     <div>URL: {blog.url}</div>
-                    <div>Likes: {blog.likes}</div> <button onClick={() => addLike()}>Like</button>
-                    {blog.user ? <div>Created by: {blog.user.name}</div> : null} {/* Conditional rendering */}
+                    <div>
+                        Likes: {blog.likes}
+                        <button onClick={() => addLike()}>Like</button>
+                    </div>
+
+                    <div>Created by: {blog.user ? blog.user.name : "--no record--"}</div>
+
+                    {blog.user && blog.user.name === user ? (
+                        <button onClick={() => deleteBlog()} style={buttonStyle}>
+                            Delete
+                        </button>
+                    ) : (
+                        ""
+                    )}
                 </div>
             )}
         </div>
