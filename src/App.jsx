@@ -107,7 +107,15 @@ const App = () => {
 
     const addBlog = async (blogObject) => {
         const returnedBlog = await blogService.create(blogObject);
-        setBlogs(blogs.concat(returnedBlog));
+        // setBlogs(blogs.concat(returnedBlog));
+
+        try {
+            const blogs = await blogService.getAll();
+            setBlogs(blogs);
+        } catch (error) {
+            // Handle error if needed
+            console.error("Error fetching blogs:", error);
+        }
 
         // setNotificationMessage(`A new blog ${title} by ${author} successfully added!`);
         setNotificationMessage(`A new blog successfully added!`);
