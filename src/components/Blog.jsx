@@ -40,7 +40,10 @@ const Blog = ({ blog, getBlogs, user }) => {
         <div style={blogStyle}>
             {isCollapsed ? (
                 <div>
-                    {blog.title} by {blog.author} <button onClick={() => setIsCollapsed(false)}>View</button>
+                    {blog.title} by {blog.author}{" "}
+                    <button className="viewBtn" onClick={() => setIsCollapsed(false)}>
+                        View
+                    </button>
                 </div>
             ) : (
                 <div>
@@ -50,7 +53,9 @@ const Blog = ({ blog, getBlogs, user }) => {
                     <div>URL: {blog.url}</div>
                     <div>
                         Likes: {blog.likes}
-                        <button onClick={() => addLike()}>Like</button>
+                        <button className="likeBtn" onClick={() => addLike()}>
+                            Like
+                        </button>
                     </div>
 
                     <div>Created by: {blog.user ? blog.user.name : "--no record--"}</div>

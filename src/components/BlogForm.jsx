@@ -26,15 +26,15 @@ const BlogForm = ({ createBlog, toggleVisibility }) => {
             <form onSubmit={addBlog}>
                 <div>
                     <span>Title</span>
-                    <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} />
+                    <input placeholder="Title" type="text" value={title} onChange={(e) => setTitle(e.target.value)} />
                 </div>
                 <div>
                     <span>Author</span>
-                    <input type="text" value={author} onChange={(e) => setAuthor(e.target.value)} />
+                    <input placeholder="Author" type="text" value={author} onChange={(e) => setAuthor(e.target.value)} />
                 </div>
                 <div>
                     <span>URL</span>
-                    <input type="text" value={url} onChange={(e) => setUrl(e.target.value)} />
+                    <input placeholder="URL" type="text" value={url} onChange={(e) => setUrl(e.target.value)} />
                 </div>
                 <button type="submit">Add Blog</button>
             </form>
