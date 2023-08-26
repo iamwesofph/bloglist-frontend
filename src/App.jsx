@@ -15,22 +15,8 @@ const App = () => {
     const [user, setUser] = useState(null);
     const [visible, setVisible] = useState(false);
 
-    // useEffect(() => {
-    //     blogService.getAll().then((blogs) => setBlogs(blogs));
-    // }, []);
-
     useEffect(() => {
-        const fetchBlogs = async () => {
-            try {
-                const blogs = await blogService.getAll();
-                setBlogs(blogs);
-            } catch (error) {
-                // Handle error if needed
-                console.error("Error fetching blogs:", error);
-            }
-        };
-
-        fetchBlogs();
+        getBlogs();
     }, []);
 
     useEffect(() => {
@@ -41,6 +27,16 @@ const App = () => {
             blogService.setToken(user.token);
         }
     }, []);
+
+    const getBlogs = async () => {
+        try {
+            const blogs = await blogService.getAll();
+            setBlogs(blogs);
+        } catch (error) {
+            // Handle error if needed
+            console.error("Error fetching blogs:", error);
+        }
+    };
 
     const handleLogin = async (event) => {
         event.preventDefault();
@@ -88,7 +84,7 @@ const App = () => {
         return (
             <>
                 {blogs.map((blog) => (
-                    <Blog key={blog.id} blog={blog} />
+                    <Blog key={blog.id} blog={blog} getBlogs={getBlogs} />
                 ))}
             </>
         );
@@ -99,15 +95,8 @@ const App = () => {
         window.localStorage.removeItem("loggedNoteappUser");
     };
 
-    // const addBlog = (blogObject) => {
-    //     blogService.create(blogObject).then((returnedBlog) => {
-    //         setBlogs(blogs.concat(returnedBlog));
-    //     });
-    // };
-
     const addBlog = async (blogObject) => {
-        const returnedBlog = await blogService.create(blogObject);
-        // setBlogs(blogs.concat(returnedBlog));
+        await blogService.create(blogObject);
 
         try {
             const blogs = await blogService.getAll();
