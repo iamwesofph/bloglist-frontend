@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import Blog from "./components/Blog";
 import Notification from "./components/Notification";
+import BlogForm from "./components/BlogForm";
+import Togglable from "./components/Togglable";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
 
@@ -11,9 +13,7 @@ const App = () => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [user, setUser] = useState(null);
-    const [title, setTitle] = useState("");
-    const [author, setAuthor] = useState("");
-    const [url, setUrl] = useState("");
+    const [visible, setVisible] = useState(false);
 
     // useEffect(() => {
     //     blogService.getAll().then((blogs) => setBlogs(blogs));
@@ -99,50 +99,33 @@ const App = () => {
         window.localStorage.removeItem("loggedNoteappUser");
     };
 
-    const handleAddBlog = async (event) => {
-        event.preventDefault();
-        const blogObject = {
-            title: title,
-            author: author,
-            url: url,
-        };
+    // const addBlog = (blogObject) => {
+    //     blogService.create(blogObject).then((returnedBlog) => {
+    //         setBlogs(blogs.concat(returnedBlog));
+    //     });
+    // };
 
-        try {
-            const returnedBlog = await blogService.create(blogObject);
-            setBlogs(blogs.concat(returnedBlog));
-            setNotificationMessage(`A new blog ${title} by ${author} successfully added!`);
-            setNotificationType("success");
-            setTimeout(() => {
-                setNotificationMessage(null);
-                setNotificationType("");
-            }, 5000);
-            setTitle("");
-            setAuthor("");
-            setUrl("");
-        } catch (error) {
-            // Handle error if needed
-            console.error("Error adding note:", error);
-        }
+    const addBlog = async (blogObject) => {
+        const returnedBlog = await blogService.create(blogObject);
+        setBlogs(blogs.concat(returnedBlog));
+
+        // setNotificationMessage(`A new blog ${title} by ${author} successfully added!`);
+        setNotificationMessage(`A new blog successfully added!`);
+        setNotificationType("success");
+        setTimeout(() => {
+            setNotificationMessage(null);
+            setNotificationType("");
+        }, 5000);
     };
 
-    const addBlogForm = () => {
-        return (
-            <form onSubmit={handleAddBlog}>
-                <div>
-                    <span>Title</span>
-                    <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} />
-                </div>
-                <div>
-                    <span>Author</span>
-                    <input type="text" value={author} onChange={(e) => setAuthor(e.target.value)} />
-                </div>
-                <div>
-                    <span>URL</span>
-                    <input type="text" value={url} onChange={(e) => setUrl(e.target.value)} />
-                </div>
-                <button type="submit">Add Blog</button>
-            </form>
-        );
+    const addBlogForm = () => (
+        <Togglable buttonLabel="New Blog" visible={visible} toggleVisibility={toggleVisibility}>
+            <BlogForm createBlog={addBlog} toggleVisibility={toggleVisibility} />
+        </Togglable>
+    );
+
+    const toggleVisibility = () => {
+        setVisible(!visible);
     };
 
     return (
