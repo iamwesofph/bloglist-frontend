@@ -31,7 +31,8 @@ const App = () => {
     const getBlogs = async () => {
         try {
             const blogs = await blogService.getAll();
-            setBlogs(blogs);
+            const sortedBlogs = [...blogs].sort((a, b) => b.likes - a.likes);
+            setBlogs(sortedBlogs);
         } catch (error) {
             // Handle error if needed
             console.error("Error fetching blogs:", error);
