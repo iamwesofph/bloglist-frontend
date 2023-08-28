@@ -1,76 +1,46 @@
 import { useState } from "react";
-import blogService from "../services/blogs";
+import PropTypes from "prop-types";
 
-const Blog = ({ blog, getBlogs, user }) => {
-    const [isCollapsed, setIsCollapsed] = useState(true);
-    const blogStyle = {
-        paddingTop: 10,
-        paddingLeft: 2,
-        border: "solid",
-        borderWidth: 1,
-        marginBottom: 5,
-    };
+const Blog = ({ blog, like, canRemove, remove }) => {
+    const [visible, setVisible] = useState(false);
 
-    const buttonStyle = {
-        padding: ".5rem 1rem",
-        backgroundColor: "dodgerblue",
-        borderRadius: "0.375rem",
-        border: "none",
-    };
-
-    const addLike = async () => {
-        const blogObject = {
-            likes: blog.likes + 1,
-        };
-        await blogService.update(blog.id, blogObject);
-
-        getBlogs();
-    };
-
-    const deleteBlog = async () => {
-        if (window.confirm("Are you sure?")) {
-            console.log(blog.id);
-            await blogService.remove(blog.id);
-        }
-
-        getBlogs();
+    const style = {
+        marginBottom: 2,
+        padding: 5,
+        borderStyle: "solid",
     };
 
     return (
-        <div style={blogStyle}>
-            {isCollapsed ? (
-                <div>
-                    {blog.title} by {blog.author}{" "}
-                    <button className="viewBtn" onClick={() => setIsCollapsed(false)}>
-                        View
-                    </button>
-                </div>
-            ) : (
+        <div style={style} className="blog">
+            {blog.title} {blog.author}
+            <button onClick={() => setVisible(!visible)}>{visible ? "hide" : "show"}</button>
+            {visible && (
                 <div>
                     <div>
-                        {blog.title} by {blog.author} <button onClick={() => setIsCollapsed(true)}>Hide</button>
+                        {" "}
+                        <a href={blog.url}> {blog.url}</a>{" "}
                     </div>
-                    <div>URL: {blog.url}</div>
                     <div>
-                        Likes: {blog.likes}
-                        <button className="likeBtn" onClick={() => addLike()}>
-                            Like
-                        </button>
+                        likes {blog.likes} <button onClick={like}>like</button>
                     </div>
-
-                    <div>Created by: {blog.user ? blog.user.name : "--no record--"}</div>
-
-                    {blog.user && blog.user.name === user ? (
-                        <button onClick={() => deleteBlog()} style={buttonStyle}>
-                            Delete
-                        </button>
-                    ) : (
-                        ""
-                    )}
+                    <div>{blog.user && blog.user.name}</div>
+                    {canRemove && <button onClick={remove}>delete</button>}
                 </div>
             )}
         </div>
     );
+};
+
+Blog.propTypes = {
+    like: PropTypes.func.isRequired,
+    remove: PropTypes.func.isRequired,
+    canRemove: PropTypes.bool,
+    blog: PropTypes.shape({
+        title: PropTypes.string,
+        author: PropTypes.string,
+        url: PropTypes.string,
+        likes: PropTypes.number,
+    }),
 };
 
 export default Blog;

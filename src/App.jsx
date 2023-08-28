@@ -70,13 +70,15 @@ const App = () => {
                 <h2>Login to Application</h2>
                 <div>
                     <span>Username</span>
-                    <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} />
+                    <input id="username" type="text" value={username} onChange={(e) => setUsername(e.target.value)} />
                 </div>
                 <div>
                     <span>Password</span>
-                    <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+                    <input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
                 </div>
-                <button type="submit">Login</button>
+                <button id="login-button" type="submit">
+                    Login
+                </button>
             </form>
         );
     };
